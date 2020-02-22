@@ -23,7 +23,7 @@
             <el-input v-model="form.code" autocomplete="off"></el-input>
           </el-col>
           <el-col :span="6" :offset="1">
-            <img src="../img/login_logo.png" alt />
+            <img @click="img_code" class="img_code" :src="go_code" alt />
           </el-col>
         </el-row>
       </el-form-item>
@@ -52,13 +52,15 @@ export default {
     return {
       dialogFormVisible: false,
       formLabelWidth: "65px",
+      //   图片验证码
+      go_code:process.env.VUE_APP_URL+"/captcha?type=sendsms",
       form: {
         name: "",
         email: "",
         phone: "",
         password: "",
-        code:'',
-        rcode:''
+        code: "",
+        rcode: ""
       },
       rules: {
         name: [{ required: true, message: "昵称不能留空", trigger: "blur" }],
@@ -82,20 +84,24 @@ export default {
           { required: true, message: "密码不能留空", trigger: "blur" },
           { max: 12, min: 6, message: "密码格式不正确", trigger: "change" }
         ],
-        code:[{ required: true, message: "图像码不能留空", trigger: "blur" }],
-        rcode:[{ required: true, message: "验证码不能留空", trigger: "blur" }]
+        code: [{ required: true, message: "图像码不能留空", trigger: "blur" }],
+        rcode: [{ required: true, message: "验证码不能留空", trigger: "blur" }]
       }
     };
   },
   methods: {
-      sure(){
-          this.$refs.form.validate(v=>{
-              if(v){
-                  alert('注册成功')
-              }
-          })
-      }
-  },
+    //   点击确定
+    sure() {
+      this.$refs.form.validate(v => {
+        if (v) {
+          alert("注册成功");
+        }
+      });
+    },
+    img_code(){
+        this.go_code=process.env.VUE_APP_URL+"/captcha?type=sendsms"+"&l="+new Date();
+    }
+  }
 };
 </script>
 
@@ -105,5 +111,8 @@ export default {
   span {
     color: #fff;
   }
+}
+.img_code{
+    width: 100%;
 }
 </style>
