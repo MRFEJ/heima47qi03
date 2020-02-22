@@ -10,17 +10,28 @@
       <!-- 表单 -->
       <el-form :model="form" :rules="rules" ref="form" class="demo-form">
         <el-form-item prop="phone">
-          <el-input v-model="form.phone" placehodel="请输入手机号"></el-input>
+          <el-input prefix-icon="el-icon-user" clearable v-model="form.phone" placehodel="请输入手机号"></el-input>
         </el-form-item>
 
         <el-form-item prop="password">
-          <el-input v-model="form.password" placehodel="请输入密码"></el-input>
+          <el-input
+            prefix-icon="el-icon-lock"
+            show-password
+            clearable
+            v-model="form.password"
+            placehodel="请输入密码"
+          ></el-input>
         </el-form-item>
 
         <el-form-item prop="code">
           <el-row>
             <el-col :span="17">
-              <el-input v-model="form.code" placehodel="请输入验证码"></el-input>
+              <el-input
+                prefix-icon="el-icon-key"
+                clearable
+                v-model="form.code"
+                placehodel="请输入验证码"
+              ></el-input>
             </el-col>
             <el-col :span="7">
               <img class="img_code" src="./img/login_banner_ele.png" alt />
@@ -39,8 +50,8 @@
         <el-form-item>
           <el-row>
             <el-col>
-              <el-button type="primary" @click="submitForm">立即创建</el-button>
-              <el-button>重置</el-button>
+              <el-button type="primary" @click="submitForm">立即登录</el-button>
+              <el-button>注册</el-button>
             </el-col>
           </el-row>
         </el-form-item>
@@ -58,9 +69,40 @@ export default {
         phone: "",
         password: "",
         code: "",
-        checked: ""
+        checked: false
+      },
+      rules: {
+        phone: [
+          { required: true, message: "手机号不能为空", trigger: "blur" },
+          {
+            pattern: /0?(13|14|15|18)[0-9]{9}/,
+            message: "手机号格式不正确",
+            trigger: "blur"
+          }
+        ],
+        password: [
+          { required: true, message: "密码不能为空", trigger: "blur" },
+          { max: 12, min: 6, message: "密码是6-12位", trigger: "change" }
+        ],
+        code: [{ required: true, message: "验证码不能为空", trigger: "blur" }],
+        checked: [
+          {
+            pattern: /true/,
+            message: "请勾选我已阅读并同意用户协议和隐私条款",
+            trigger: "change"
+          }
+        ]
       }
     };
+  },
+  methods: {
+    submitForm() {
+      this.$refs.form.validate(v => {
+        if (v) {
+          window.console.log(v);
+        }
+      });
+    }
   }
 };
 </script>
@@ -85,6 +127,7 @@ export default {
     .logo_title {
       display: flex;
       align-items: center;
+      margin-bottom: 29px;
       .logo {
         margin-right: 16px;
         width: 22px;
@@ -115,7 +158,7 @@ export default {
       }
     }
     .el-checkbox {
-        display: flex;
+      display: flex;
       .el-checkbox__label {
         display: flex;
         align-items: center;
