@@ -1,6 +1,6 @@
 <template>
   <el-dialog title="用户注册" center :visible.sync="dialogFormVisible">
-    <el-form :model="form" :rules="rules">
+    <el-form :model="form" :rules="rules" ref="form">
       <el-form-item label="昵称" :label-width="formLabelWidth" prop="name">
         <el-input v-model="form.name" autocomplete="off"></el-input>
       </el-form-item>
@@ -34,7 +34,7 @@
             <el-input v-model="form.rcode" autocomplete="off"></el-input>
           </el-col>
           <el-col :span="6" :offset="1">
-            <el-button>获取用户验证码</el-button>
+            <el-button @click="btn_time" :disabled="time!=0">{{time==0? "获取用户验证码":"还有"+time+"秒"}}</el-button>
           </el-col>
         </el-row>
       </el-form-item>
@@ -53,7 +53,9 @@ export default {
       dialogFormVisible: false,
       formLabelWidth: "65px",
       //   图片验证码
-      go_code:process.env.VUE_APP_URL+"/captcha?type=sendsms",
+      go_code: process.env.VUE_APP_URL + "/captcha?type=sendsms",
+      //   短信倒计时
+      time: 0,
       form: {
         name: "",
         email: "",
@@ -98,8 +100,38 @@ export default {
         }
       });
     },
-    img_code(){
-        this.go_code=process.env.VUE_APP_URL+"/captcha?type=sendsms"+"&l="+new Date();
+    // 点击图片码
+    img_code() {
+      this.go_code =
+        process.env.VUE_APP_URL + "/captcha?type=sendsms" + "&l=" + new Date();
+    },
+    // 点击获取短信验证码
+    btn_time() {
+      this.time = 60;
+      let set = setInterval(() => {
+        this.time--;
+        if (this.time == 0) {
+          clearInterval(set);
+        }
+      }, 1000);
+
+      this.$axios({
+        url: process.env.VUE_APP_URL + "/sendsms",
+        method: "post",
+        data: {
+          code: this.form.code,
+          phone: this.form.phone
+        },
+        withCredentials: true 
+      }).then(res => {
+        //成功回调
+        console.log(res);
+        if(res.data.code==200){
+            alert('验证码为:'+res.data.data.captcha)
+        }else{
+            alert(res.data.message)
+        }
+      });
     }
   }
 };
@@ -112,7 +144,7 @@ export default {
     color: #fff;
   }
 }
-.img_code{
-    width: 100%;
+.img_code {
+  width: 100%;
 }
 </style>
