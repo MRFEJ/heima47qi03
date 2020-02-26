@@ -2,6 +2,13 @@ import Vue from "vue"
 
 import login from "../view/login/login.vue"
 import index from "@/view/index/index.vue"
+
+import overview from "@/view/index/overview/overview.vue"
+import users from "@/view/index/users/users.vue"
+import Question from "@/view/index/Question/Question.vue"
+import Companies from "@/view/index/Companies/Companies.vue"
+import Subject from "@/view/index/Subject/Subject.vue"
+
 // 导入 vue-router
 import VueRouter from 'vue-router'
 //注册 vue-router
@@ -16,7 +23,14 @@ const router = new VueRouter({
     },
     {
       path: "/index",
-      component: index
+      component: index,
+      children: [
+        { path: 'overview', component: overview },
+        { path: 'users', component: users },
+        { path: 'Question', component: Question },
+        { path: 'Companies', component: Companies },
+        { path: 'Subject', component: Subject },
+      ]
     }
     //  {
     // path: '*',  //路由重定向
