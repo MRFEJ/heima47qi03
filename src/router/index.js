@@ -43,8 +43,9 @@ const router = new VueRouter({
   ]
 })
 
-// 导入导航守卫
-// 当路由改变前
+// // 白名单  无需验证token 普通用户可以观看的页面
+// let whileArr=[]
+// 导入导航守卫  当路由改变前
 router.beforeEach((to, from, next) => {
   // to and from are both route objects. must call `next`.
   // 开启进度条

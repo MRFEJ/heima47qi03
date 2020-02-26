@@ -13,7 +13,7 @@
       <div class="right">
         <img class="avatar" :src="avatar" alt />
         <span class="name">{{username}},您好</span>
-        <el-button type="primary" size="mini">退出</el-button>
+        <el-button type="primary" size="mini" @click="goOut">退出</el-button>
       </div>
     </el-header>
     <el-container>
@@ -55,7 +55,9 @@
 
 <script>
 // 导入index请求的文件
-import { info } from "@/api/index.js";
+import { info,logout } from "@/api/index.js";
+// 导入token工具
+import {removeToken} from "@/utils/token.js"
 export default {
   data() {
     return {
@@ -74,6 +76,34 @@ export default {
       this.avatar = process.env.VUE_APP_URL + "/" + res.data.data.avatar;
       this.username = res.data.data.username;
     });
+  },
+  methods: {
+    goOut() {
+      this.$confirm("此操作将退出本系统, 是否继续退出?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          logout().then(res=>{
+              window.console.log(res);
+              
+              if(res.data.code==200){
+                  this.$message.success('退出成功!!');
+                  removeToken();
+                  this.$router.push('/login');
+              }else{
+                  this.$message.error('退出失败')
+              }
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "谢谢您还留下来!!"
+          });
+        });
+    }
   }
 };
 </script>

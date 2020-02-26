@@ -10,6 +10,6 @@ export function getToken() {
     return window.localStorage.getItem(TOKENKET)
 }
 // 删除token
-export function remocveToken() {
+export function removeToken() {
     return window.localStorage.removeItem(TOKENKET)
 }
