@@ -26,15 +26,10 @@
         <el-form-item prop="code">
           <el-row>
             <el-col :span="17">
-              <el-input
-                prefix-icon="el-icon-key"
-                clearable
-                v-model="form.code"
-                placehodel="请输入验证码"
-              ></el-input>
+              <el-input prefix-icon="el-icon-key" clearable v-model="form.code" placehodel="请输入验证码"></el-input>
             </el-col>
             <el-col :span="7">
-              <img class="img_code" src="./img/login_banner_ele.png" alt />
+              <img @click="img_code" class="img_code" :src="code_img" alt />
             </el-col>
           </el-row>
         </el-form-item>
@@ -65,33 +60,38 @@
 </template>
 
 <script>
-import reg from "./components/reg"
+import reg from "./components/reg";
 export default {
-    components:{
-        reg
-    },
+  components: {
+    reg
+  },
   data() {
     return {
+      // 图形码
+      code_img: process.env.VUE_APP_URL + "/captcha?type=login",
       form: {
-        phone: "",
-        password: "",
+        phone: "13888888888",
+        password: "123456",
         code: "",
-        checked: false
+        checked: true
       },
       rules: {
         phone: [
           { required: true, message: "手机号不能为空", trigger: "blur" },
           {
-            pattern: /0?(13|14|15|18)[0-9]{9}/,
+            pattern: /^0?(13|14|15|18)[0-9]{9}$/,
             message: "手机号格式不正确",
             trigger: "blur"
           }
         ],
         password: [
           { required: true, message: "密码不能为空", trigger: "blur" },
-          { max: 12, min: 6, message: "密码是6-12位", trigger: "change" }
+          { max: 12, min: 6, message: "请输入密码6-12位", trigger: "change" }
         ],
-        code: [{ required: true, message: "验证码不能为空", trigger: "blur" }],
+        code: [
+          { required: true, message: "验证码不能为空", trigger: "blur" },
+          { len: 4, message: "验证码只能是4位", trigger: "blur" }
+        ],
         checked: [
           {
             pattern: /true/,
@@ -103,6 +103,11 @@ export default {
     };
   },
   methods: {
+    // 点击图形码
+    img_code() {
+      this.code_img = process.env.VUE_APP_URL + "/captcha?type=login&d="+Date.now();
+    },
+    // 点击登录
     submitForm() {
       this.$refs.form.validate(v => {
         if (v) {
@@ -111,8 +116,8 @@ export default {
       });
     },
     // 点击注册
-    reg(){
-        this.$refs.reg.dialogFormVisible=true;
+    reg() {
+      this.$refs.reg.dialogFormVisible = true;
     }
   }
 };
