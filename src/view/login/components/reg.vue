@@ -62,6 +62,7 @@
 </template>
 
 <script>
+import { reg } from "@/api/reg.js";
 export default {
   data() {
     return {
@@ -100,14 +101,14 @@ export default {
         phone: [
           { required: true, message: "手机号不能留空", trigger: "blur" },
           {
-            pattern: /0?(13|14|15|18)[0-9]{9}/,
+            pattern: /^0?(13|14|15|18)[0-9]{9}$/,
             message: "手机号格式不正确",
             trigger: "blur"
           }
         ],
         password: [
           { required: true, message: "密码不能留空", trigger: "blur" },
-          { max: 12, min: 6, message: "密码格式不正确", trigger: "change" }
+          { max: 12, min: 6, message: "请输入4-12位密码", trigger: "change" }
         ],
         code: [
           { required: true, message: "图像码不能留空", trigger: "blur" },
@@ -149,7 +150,24 @@ export default {
     sure() {
       this.$refs.form.validate(v => {
         if (v) {
-          alert("注册成功");
+          reg({
+            username: this.form.name,
+            phone: this.form.phone,
+            email: this.form.email,
+            avatar: this.form.avatar,
+            password: this.form.password,
+            rcode: this.form.rcode
+          }).then(res => {
+            // window.console.log(res);
+            if (res.data.code == 200) {
+              this.$message.success("注册成功");
+              this.$refs.form.resetFields();
+              this.imageUrl = null;
+              this.dialogFormVisible = false;
+            } else {
+              this.$message.error(res.data.message);
+            }
+          });
         }
       });
     },
@@ -160,6 +178,12 @@ export default {
     },
     // 点击获取短信验证码
     btn_time() {
+      if (!/^0?(13|14|15|18)[0-9]{9}$/.test(this.form.phone)) {
+        return this.$message.error("手机号格式错误!");
+      }
+      if (this.form.code.length != 4) {
+        return this.$message.error("请输入4位图形码");
+      }
       this.time = 60;
       let set = setInterval(() => {
         this.time--;
@@ -180,9 +204,11 @@ export default {
         //成功回调
         console.log(res);
         if (res.data.code == 200) {
-          alert("验证码为:" + res.data.data.captcha);
+          // alert("验证码为:" + res.data.data.captcha);
+          this.$message.success("验证码为:" + res.data.data.captcha);
         } else {
-          alert(res.data.message);
+          // alert(res.data.message);
+          this.$message.error(res.data.message);
         }
       });
     }
