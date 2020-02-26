@@ -1,6 +1,21 @@
 <template>
-  <el-dialog title="用户注册" center :visible.sync="dialogFormVisible">
+  <el-dialog title="用户注册" width="600px" center :visible.sync="dialogFormVisible">
     <el-form :model="form" :rules="rules" ref="form">
+      <el-form-item label="头像" :label-width="formLabelWidth" prop="avatar">
+        <el-upload
+          name="image"
+          class="avatar-uploader"
+          :action="upload"
+          :show-file-list="false"
+          :on-success="handleAvatarSuccess"
+          :before-upload="beforeAvatarUpload"
+          v-model="form.avatar"
+        >
+          <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+        </el-upload>
+      </el-form-item>
+
       <el-form-item label="昵称" :label-width="formLabelWidth" prop="name">
         <el-input v-model="form.name" autocomplete="off"></el-input>
       </el-form-item>
@@ -50,6 +65,9 @@
 export default {
   data() {
     return {
+      upload: process.env.VUE_APP_URL + "/uploads",
+      // 图片路径
+      imageUrl: "",
       dialogFormVisible: false,
       formLabelWidth: "65px",
       //   图片验证码
@@ -62,9 +80,14 @@ export default {
         phone: "",
         password: "",
         code: "",
-        rcode: ""
+        rcode: "",
+        // 头像的值
+        avatar: ""
       },
       rules: {
+        avatar: [
+          { required: true, message: "头像不能留空", trigger: "change" }
+        ],
         name: [{ required: true, message: "昵称不能留空", trigger: "blur" }],
         email: [
           { required: true, message: "邮箱不能留空", trigger: "blur" },
@@ -86,12 +109,42 @@ export default {
           { required: true, message: "密码不能留空", trigger: "blur" },
           { max: 12, min: 6, message: "密码格式不正确", trigger: "change" }
         ],
-        code: [{ required: true, message: "图像码不能留空", trigger: "blur" }],
-        rcode: [{ required: true, message: "验证码不能留空", trigger: "blur" }]
+        code: [
+          { required: true, message: "图像码不能留空", trigger: "blur" },
+          { len: 4, message: "图像码只能是4位", trigger: "blur" }
+        ],
+        rcode: [
+          { required: true, message: "验证码不能留空", trigger: "blur" },
+          { len: 4, message: "验证码只能是4位", trigger: "blur" }
+        ]
       }
     };
   },
   methods: {
+    // 头像上传成功后执行的函数
+    handleAvatarSuccess(res, file) {
+      window.console.log(res, file);
+
+      this.imageUrl = URL.createObjectURL(file.raw);
+
+      // 把服务器上的图片路径赋值给头像的值
+      this.form.avatar = res.data.file_path;
+      this.$refs.form.validateField("avatar");
+    },
+    // 上传头像执行的函数
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === "image/jpeg" || "image/png" || "image/gif";
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        this.$message.error("上传头像只能是 图片 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+      }
+      return isJPG && isLt2M;
+    },
+
     //   点击确定
     sure() {
       this.$refs.form.validate(v => {
@@ -122,14 +175,14 @@ export default {
           code: this.form.code,
           phone: this.form.phone
         },
-        withCredentials: true 
+        withCredentials: true
       }).then(res => {
         //成功回调
         console.log(res);
-        if(res.data.code==200){
-            alert('验证码为:'+res.data.data.captcha)
-        }else{
-            alert(res.data.message)
+        if (res.data.code == 200) {
+          alert("验证码为:" + res.data.data.captcha);
+        } else {
+          alert(res.data.message);
         }
       });
     }
@@ -146,5 +199,32 @@ export default {
 }
 .img_code {
   width: 100%;
+}
+// 头像样式
+.avatar-uploader {
+  text-align: center;
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+}
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
 }
 </style>
