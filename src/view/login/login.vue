@@ -60,7 +60,11 @@
 </template>
 
 <script>
+// 导入抽离的api文件
+import { login } from "@/api/login.js";
 import reg from "./components/reg";
+// 导入抽离的token工具
+import { setToken } from "@/utils/token.js";
 export default {
   components: {
     reg
@@ -105,13 +109,28 @@ export default {
   methods: {
     // 点击图形码
     img_code() {
-      this.code_img = process.env.VUE_APP_URL + "/captcha?type=login&d="+Date.now();
+      this.code_img =
+        process.env.VUE_APP_URL + "/captcha?type=login&d=" + Date.now();
     },
     // 点击登录
     submitForm() {
       this.$refs.form.validate(v => {
         if (v) {
-          window.console.log(v);
+          login({
+            phone: this.form.phone,
+            password: this.form.password,
+            code: this.form.code
+          }).then(res => {
+            // window.console.log(res);
+            if (res.data.code == 200) {
+              this.$message.success("登录成功!");
+              setToken(res.data.data.token)
+              this.$router.push("/index");
+            }else{
+              this.$message.error(res.data.message);
+              this.img_code();
+            }
+          });
         }
       });
     },
