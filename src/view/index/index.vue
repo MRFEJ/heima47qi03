@@ -7,8 +7,8 @@
         <span class="title">黑马面面</span>
       </div>
       <div class="right">
-        <img class="avatar" src="./img/index_logo.png" alt />
-        <span class="name">大佬,您好</span>
+        <img class="avatar" :src="avatar" alt />
+        <span class="name">{{username}},您好</span>
         <el-button type="primary" size="mini">退出</el-button>
       </div>
     </el-header>
@@ -51,12 +51,26 @@
 </template>
 
 <script>
+// 导入index请求的文件
+import {info} from "@/api/index.js"
 export default {
     data() {
         return {
             // 是否收取侧边导航栏
-            isCollapse:false
+            isCollapse:false,
+            // 头像
+            avatar:'',
+            // 用户名
+            username:''
         }
+    },
+    created() {
+        info().then(res=>{
+            // window.console.log(res);
+            // 注意这里服务器返回的是没有基地址的路径 所以添加上基地址 和/
+            this.avatar=process.env.VUE_APP_URL+"/"+res.data.data.avatar;
+            this.username=res.data.data.username;
+        })
     },
 };
 </script>
