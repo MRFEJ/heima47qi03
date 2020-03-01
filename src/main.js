@@ -3,8 +3,8 @@ import App from './App.vue'
 import router from "./router/index"
 import "./style/base.css"
 
-import axios from 'axios'
-Vue.prototype.$axios = axios;
+// 导入全局过滤器
+import "@/filter/filter.js"
 
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';

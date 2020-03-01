@@ -59,12 +59,12 @@ import { info, logout } from "@/api/index.js";
 // 导入token工具
 import { removeToken } from "@/utils/token.js";
 export default {
-//   beforeCreate() {
-//     if (!getToken()) {
-//       this.$message.error("请先登录!!!");
-//       this.$router.push("/login");
-//     }
-//   },
+  //   beforeCreate() {
+  //     if (!getToken()) {
+  //       this.$message.error("请先登录!!!");
+  //       this.$router.push("/login");
+  //     }
+  //   },
   data() {
     return {
       // 是否收取侧边导航栏
@@ -77,7 +77,7 @@ export default {
   },
   created() {
     info().then(res => {
-    //   window.console.log(res);
+      //   window.console.log(res);
       // 注意这里服务器返回的是没有基地址的路径 所以添加上基地址 和/
       this.avatar = process.env.VUE_APP_URL + "/" + res.data.data.avatar;
       this.username = res.data.data.username;
@@ -168,6 +168,7 @@ body {
   }
   .my_main {
     background-color: yellowgreen;
+    overflow: hidden;
   }
 }
 // 侧边导航栏样式
