@@ -3,18 +3,18 @@ import Vue from "vue"
 import login from "../view/login/login.vue"
 import index from "@/view/index/index.vue"
 
-import overview from "@/view/index/overview/overview.vue"
-import users from "@/view/index/users/users.vue"
-import Question from "@/view/index/Question/Question.vue"
-import enterprise from "@/view/index/enterprise/enterprise.vue"
-import Subject from "@/view/index/Subject/Subject.vue"
 
+// 导入子路由
+import route from "./route.js"
 // 导入验证用户信息
 import { info } from "@/api/index.js"
 // 导入进度条
 import nprogress from "nprogress"
 // 导入进度条的样式
 import "nprogress/nprogress.css"
+
+// 导入vuex数据仓库
+import store from "@/store/vuex.js"
 
 // 导入token工具
 import { removeToken } from "@/utils/token.js"
@@ -38,24 +38,8 @@ const router = new VueRouter({
     {
       path: "/index",
       component: index,
-      meta: { title: "首页" },
-      children: [
-        {
-          path: 'overview', component: overview, meta: { title: "数据概览" },
-        },
-        {
-          path: 'users', component: users, meta: { title: "用户列表" },
-        },
-        {
-          path: 'Question', component: Question, meta: { title: "题库列表" },
-        },
-        {
-          path: 'enterprise', component: enterprise, meta: { title: "企业列表" },
-        },
-        {
-          path: 'Subject', component: Subject, meta: { title: "学科列表" },
-        },
-      ]
+      meta: { title: "首页", role: ['超级管理员', '管理员', '老师', '学生'] },
+      children: route
     },
     {
       path: '/',  //路由重定向
@@ -76,7 +60,23 @@ router.beforeEach((to, from, next) => {
   } else {
     info().then(res => {
       if (res.data.code == 200) {
-        next();
+        if (res.data.data.status==1) {
+          if (from.path == "/login") {
+            Message.success("登录成功!");
+          }
+          store.commit('changeName', res.data.data.username);
+          store.commit('changeAvatar', process.env.VUE_APP_URL + "/" + res.data.data.avatar);
+          store.commit('changeRole', res.data.data.role);
+          if (to.meta.role.includes(res.data.data.role)) {
+            next();
+          } else {
+            Message.warning("对不起,该身份无权访问!请与管理员联系!")
+            next(from.path)
+          }
+        } else {
+          Message.warning("对不起,该账号无权访问!请与管理员联系!")
+          next("/login")
+        }
       } else if (res.data.code == 206) {
         Message.error("登录异常,请重新登录")
         // 删除token

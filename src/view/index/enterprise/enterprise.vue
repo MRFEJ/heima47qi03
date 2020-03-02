@@ -71,7 +71,11 @@
 
 <script>
 import enterpriseCom from "./components/enterpriseCom";
-import { enterpriseList, enterpriseRemove, enterpriseStatus } from "@/api/enterprise.js";
+import {
+  enterpriseList,
+  enterpriseRemove,
+  enterpriseStatus
+} from "@/api/enterprise.js";
 export default {
   components: {
     enterpriseCom
@@ -151,8 +155,10 @@ export default {
     edit(item) {
       this.$refs.enterpriseCom.dialogFormVisible = true;
       this.$refs.enterpriseCom.isCom = false;
-      if (this.oldItem != item) this.$refs.enterpriseCom.form = { ...item };
-      this.oldItem = item;
+      if (this.oldItem != item) {
+        this.$refs.userCom.form = { ...item };
+        this.oldItem = item;
+      }
     }
   }
 };

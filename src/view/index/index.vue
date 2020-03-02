@@ -11,38 +11,20 @@
         <span class="title">黑马面面</span>
       </div>
       <div class="right">
-        <img class="avatar" :src="avatar" alt />
-        <span class="name">{{username}},您好</span>
+        <img class="avatar" :src="$store.state.userAvatar" alt />
+        <span class="name">{{$store.state.username}},您好</span>
         <el-button type="primary" size="mini" @click="goOut">退出</el-button>
       </div>
     </el-header>
     <el-container>
       <el-aside class="my_aside" width="auto">
         <el-menu router default-active="1" class="el-menu-vertical-demo" :collapse="isCollapse">
-          <el-menu-item index="/index/overview">
-            <i class="el-icon-pie-chart"></i>
-            <span slot="title">数据概览</span>
-          </el-menu-item>
-
-          <el-menu-item index="/index/users">
-            <i class="el-icon-user"></i>
-            <span slot="title">用户列表</span>
-          </el-menu-item>
-
-          <el-menu-item index="/index/Question">
-            <i class="el-icon-edit-outline"></i>
-            <span slot="title">题库列表</span>
-          </el-menu-item>
-
-          <el-menu-item index="/index/enterprise">
-            <i class="el-icon-office-building"></i>
-            <span slot="title">企业列表</span>
-          </el-menu-item>
-
-          <el-menu-item index="/index/Subject">
-            <i class="el-icon-notebook-2"></i>
-            <span slot="title">学科列表</span>
-          </el-menu-item>
+          <template v-for="(item, index) in rout">
+            <el-menu-item :index="'/index/'+item.path" :key="index" v-if="item.meta.role.includes($store.state.Role)">
+              <i :class="item.meta.icon"></i>
+              <span slot="title">{{item.meta.title}}</span>
+            </el-menu-item>
+          </template>
         </el-menu>
       </el-aside>
       <el-main class="my_main">
@@ -54,8 +36,9 @@
 </template>
 
 <script>
+import rout from "@/router/route.js";
 // 导入index请求的文件
-import { info, logout } from "@/api/index.js";
+import { logout } from "@/api/index.js";
 // 导入token工具
 import { removeToken } from "@/utils/token.js";
 export default {
@@ -67,21 +50,10 @@ export default {
   //   },
   data() {
     return {
+      rout,
       // 是否收取侧边导航栏
       isCollapse: false,
-      // 头像
-      avatar: "",
-      // 用户名
-      username: ""
     };
-  },
-  created() {
-    info().then(res => {
-      //   window.console.log(res);
-      // 注意这里服务器返回的是没有基地址的路径 所以添加上基地址 和/
-      this.avatar = process.env.VUE_APP_URL + "/" + res.data.data.avatar;
-      this.username = res.data.data.username;
-    });
   },
   methods: {
     goOut() {
