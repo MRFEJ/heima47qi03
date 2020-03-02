@@ -6,7 +6,7 @@ import index from "@/view/index/index.vue"
 import overview from "@/view/index/overview/overview.vue"
 import users from "@/view/index/users/users.vue"
 import Question from "@/view/index/Question/Question.vue"
-import Companies from "@/view/index/Companies/Companies.vue"
+import enterprise from "@/view/index/enterprise/enterprise.vue"
 import Subject from "@/view/index/Subject/Subject.vue"
 
 // 导入验证用户信息
@@ -50,7 +50,7 @@ const router = new VueRouter({
           path: 'Question', component: Question, meta: { title: "题库列表" },
         },
         {
-          path: 'Companies', component: Companies, meta: { title: "企业列表" },
+          path: 'enterprise', component: enterprise, meta: { title: "企业列表" },
         },
         {
           path: 'Subject', component: Subject, meta: { title: "学科列表" },

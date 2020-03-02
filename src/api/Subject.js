@@ -1,24 +1,7 @@
-import axios from "axios"
-
-import { getToken } from "@/utils/token.js"
-
-const SubjectRequery = axios.create({
-  baseURL: process.env.VUE_APP_URL,
-  withCredentials: true
-})
-
-SubjectRequery.interceptors.request.use(function (config) {
-  // 在发送请求之前做些什么
-  config.headers.token = getToken()
-  return config;
-}, function (error) {
-  // 对请求错误做些什么
-  return Promise.reject(error);
-});
-
+import requery from "@/utils/requery.js"
 //   获取学科列表
 export function SubjectList(params) {
-  return SubjectRequery({
+  return requery({
     url: '/subject/list',
     params
   })
@@ -26,7 +9,7 @@ export function SubjectList(params) {
 
 //   删除学科列表
 export function SubjectRemove(data) {
-  return SubjectRequery({
+  return requery({
     url: '/subject/remove',
     method: "post",
     data
@@ -35,7 +18,7 @@ export function SubjectRemove(data) {
 
 //   修改状态
 export function SubjectStatus(data) {
-  return SubjectRequery({
+  return requery({
     url: '/subject/status',
     method: "post",
     data
@@ -44,7 +27,7 @@ export function SubjectStatus(data) {
 
 //   新增学科
 export function SubjectAdd(data) {
-  return SubjectRequery({
+  return requery({
     url: '/subject/add',
     method: "post",
     data
@@ -53,7 +36,7 @@ export function SubjectAdd(data) {
 
 //   编辑学科
 export function SubjectEdit(data) {
-  return SubjectRequery({
+  return requery({
     url: '/subject/edit',
     method: "post",
     data

@@ -1,22 +1,22 @@
 <template>
-  <el-dialog :title="isCom? '新增学科': '编辑学科'" center width="600px" :visible.sync="dialogFormVisible">
+  <el-dialog :title="isCom? '新增企业': '编辑企业'" center width="600px" :visible.sync="dialogFormVisible">
     <el-form ref="form" :model="form" :rules="rules">
-      <el-form-item label="学科编号" :label-width="formLabelWidth" prop="rid">
-        <el-input v-model="form.rid" autocomplete="off"></el-input>
+      <el-form-item label="企业编号" :label-width="formLabelWidth" prop="eid">
+        <el-input v-model="form.eid" autocomplete="off"></el-input>
       </el-form-item>
 
-      <el-form-item label="学科名称" :label-width="formLabelWidth" prop="name">
+      <el-form-item label="企业名称" :label-width="formLabelWidth" prop="name">
         <el-input v-model="form.name" autocomplete="off"></el-input>
       </el-form-item>
-      <el-form-item label="学科简称" :label-width="formLabelWidth">
+      <el-form-item label="企业简称" :label-width="formLabelWidth">
         <el-input v-model="form.short_name" autocomplete="off"></el-input>
       </el-form-item>
 
-      <el-form-item label="学科简介" :label-width="formLabelWidth">
+      <el-form-item label="企业简介" :label-width="formLabelWidth">
         <el-input v-model="form.intro	" autocomplete="off"></el-input>
       </el-form-item>
 
-      <el-form-item label="学科备注" :label-width="formLabelWidth">
+      <el-form-item label="企业备注" :label-width="formLabelWidth">
         <el-input v-model="form.remark" autocomplete="off"></el-input>
       </el-form-item>
     </el-form>
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { SubjectAdd, SubjectEdit } from "@/api/Subject.js";
+import { enterpriseAdd, enterpriseEdit } from "@/api/enterprise.js";
 export default {
   data() {
     return {
@@ -37,8 +37,8 @@ export default {
       form: {},
       formLabelWidth: "80px",
       rules: {
-        rid: [{ required: true, message: "请输入学科编号", trigger: "blur" }],
-        name: [{ required: true, message: "请输入学科名称", trigger: "blur" }]
+        eid: [{ required: true, message: "请输入企业编号", trigger: "blur" }],
+        name: [{ required: true, message: "请输入企业名称", trigger: "blur" }]
       }
     };
   },
@@ -48,7 +48,7 @@ export default {
         if (v) {
           //   新增
           if (this.isCom) {
-            SubjectAdd(this.form).then(res => {
+            enterpriseAdd(this.form).then(res => {
               // window.console.log(res);
               if (res.data.code == 200) {
                 this.$message.success("新增成功!!");
@@ -60,7 +60,7 @@ export default {
               }
             });
           } else {
-            SubjectEdit(this.form).then(res => {
+            enterpriseEdit(this.form).then(res => {
               // window.console.log(res);
               if (res.data.code == 200) {
                 this.$message.success("编辑成功!!");
